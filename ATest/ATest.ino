@@ -34,11 +34,6 @@ private:
   int pin2;
 };
 
-DCMotor motor2(5, 4, 3);
-DCMotor motor1(6, 7, 8);
-
-Servo servo1;
-Servo servo2;
 
 void setup() {
   //DONT USE PIN13 FOR ANY SENSOR OR ACTUATORS
@@ -46,6 +41,7 @@ void setup() {
   Serial.begin(9600);  //preferred transmission rate for Arduino UNO R4
   servo1.attach(servo1Pin);
   servo2.attach(servo2Pin);
+  
 }
 void loop() {
   // put your main code here, to run repeatedly:
