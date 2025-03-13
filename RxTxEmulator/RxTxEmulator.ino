@@ -9,7 +9,7 @@ Carlton Engelhardt
 
 #include "WifiPort.h"
 #include <Servo.h>
-
+#include <Arduino.h>
 // STRUCTURE PACKET
 struct DataPacket
 {
@@ -25,7 +25,7 @@ struct DataPacket
 
 // START WIFI DECLARATIONS
 WifiPort<DataPacket> WifiSerial;
-WifiPortType portType = WifiPortType::Emulator; // WifiPortType::Transmitter, WifiPortType::Receiver, WifiPortType::Emulator
+WifiPortType portType = WifiPortType::Transmitter; // WifiPortType::Transmitter, WifiPortType::Receiver, WifiPortType::Emulator
 // END WIFI DECLARATIONS
 
 // START RECEIVER DECLARATIONS
@@ -93,13 +93,13 @@ void setup()
   // DONT USE PIN13 FOR ANY SENSOR OR ACTUATORS
   Serial.begin(115200);
   WifiSerial.begin("PairAP_CBG28", "GiggleSmurfs69", portType);
-  if (WifiSerial.getPortType() == WifiPortType::Transmitter || WifiSerial.getPortType() == WifiPortType::Emulator)
+  if (WifiSerial.getPortType() == WifiPortType::Receiver || WifiSerial.getPortType() == WifiPortType::Emulator)
   {
     servo1.attach(servo1Pin);
     servo2.attach(servo2Pin);
   }
 
-  if ((WifiSerial.getPortType() == WifiPortType::Receiver || WifiSerial.getPortType() == WifiPortType::Emulator) && WifiSerial.checkForData())
+  if ((WifiSerial.getPortType() == WifiPortType::Transmitter || WifiSerial.getPortType() == WifiPortType::Emulator))
   {
     pinMode(movementJoystick_y, INPUT);
     pinMode(movementJoystick_x, INPUT);
@@ -123,6 +123,7 @@ void loop()
     data.movementJoystick_x = analogRead(movementJoystick_x);
     data.armJoystick_y = analogRead(armJoystick);
     data.armButtonState = !digitalRead(armJoystickButton);
+   
     data.spinLeft = !digitalRead(spinLeft);
     data.spinRight = !digitalRead(spinRight);
     // END DATA PACKET
@@ -205,6 +206,6 @@ void loop()
 
     // END RECEIVER CODE
 
-    delay(100); // update delay after you get it working to be a smaller number like 10ms to account for WiFi transmission overhead
+    delay(10); // update delay after you get it working to be a smaller number like 10ms to account for WiFi transmission overhead
   }
 }
