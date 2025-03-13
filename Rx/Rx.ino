@@ -22,7 +22,7 @@ void setup() {
 
   // WifiSerial.begin("ssid_UPDATE_FOR_YOUR_GROUP", "password_UPDATE", WifiPortType::Transmitter);
   // WifiSerial.begin("ssid_UPDATE_FOR_YOUR_GROUP", "password_UPDATE", WifiPortType::Receiver);
-  WifiSerial.begin("ssid_UPDATE_FOR_YOUR_GROUP", "123", WifiPortType::Emulator); // one board to rule them all debugging
+  WifiSerial.begin("PairAP_CBG28", "GiggleSmurfs69", WifiPortType::Receiver); // one board to rule them all debugging
 }
 
 void loop() {
