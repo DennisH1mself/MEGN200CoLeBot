@@ -71,11 +71,11 @@ private:
     int pin2;
 };
 
-const int servo1Pin = 9;
-const int servo2Pin = 10;
+const int servo1Pin = A0; // 9
+const int servo2Pin = A1; // 10
 
-DCMotor motor2(5, 4, 3);
-DCMotor motor1(6, 7, 8);
+DCMotor motor2(6, 5, 7); // DCMotor motor2(5, 4, 3);
+DCMotor motor1(3, 2, 4); // DCMotor motor1(6, 7, 8);
 
 Servo servo1;
 Servo servo2;
