@@ -7,9 +7,9 @@ Lily Orth
 Carlton Engelhardt
 */
 
-#include "WifiPort.h"
+
 #include <Servo.h>
-#include <Arduino.h>
+#include "WifiPort.h"
 // STRUCTURE PACKET
 struct DataPacket
 {
@@ -25,7 +25,7 @@ struct DataPacket
 
 // START WIFI DECLARATIONS
 WifiPort<DataPacket> WifiSerial;
-WifiPortType portType = WifiPortType::Transmitter; // WifiPortType::Transmitter, WifiPortType::Receiver, WifiPortType::Emulator
+WifiPortType portType = WifiPortType::Receiver; // WifiPortType::Transmitter, WifiPortType::Receiver, WifiPortType::Emulator
 // END WIFI DECLARATIONS
 
 // START RECEIVER DECLARATIONS
@@ -76,6 +76,17 @@ DCMotor motor1(6, 7, 8);
 
 Servo servo1;
 Servo servo2;
+int lastArmServoPos = 0;
+void setArmPos(int newPos) {
+  lastArmServoPos = newPos;
+  if (newPos >= 180) {
+    lastArmServoPos = 180;
+  } else if (newPos <= 0) {
+    lastArmServoPos = 0;
+  }
+  
+  servo1.write(lastArmServoPos);
+}
 // END RECEIVER DECLARATIONS
 
 // START TRANSMITTER DECLARATIONS
@@ -90,13 +101,17 @@ const int spinRight = A5;
 
 void setup()
 {
+  //motor1.setSpeed(255);
   // DONT USE PIN13 FOR ANY SENSOR OR ACTUATORS
   Serial.begin(115200);
   WifiSerial.begin("PairAP_CBG28", "GiggleSmurfs69", portType);
+  
   if (WifiSerial.getPortType() == WifiPortType::Receiver || WifiSerial.getPortType() == WifiPortType::Emulator)
   {
     servo1.attach(servo1Pin);
     servo2.attach(servo2Pin);
+    servo2.write(0);
+    setArmPos(0);
   }
 
   if ((WifiSerial.getPortType() == WifiPortType::Transmitter || WifiSerial.getPortType() == WifiPortType::Emulator))
@@ -123,7 +138,6 @@ void loop()
     data.movementJoystick_x = analogRead(movementJoystick_x);
     data.armJoystick_y = analogRead(armJoystick);
     data.armButtonState = !digitalRead(armJoystickButton);
-   
     data.spinLeft = !digitalRead(spinLeft);
     data.spinRight = !digitalRead(spinRight);
     // END DATA PACKET
@@ -203,7 +217,12 @@ void loop()
       motor1.setSpeed(motor1DirectionalModifier * motorSpeed);
       motor2.setSpeed(motor2DirectionalModifier * motorSpeed);
     }
-
+    if (data.armJoystick_y >= 520) {
+      setArmPos(lastArmServoPos + map(data.armJoystick_y, 520, 1023, 1, 3));
+    }
+    if (data.armJoystick_y <= 508) {
+      setArmPos(lastArmServoPos + map(data.armJoystick_y, 0, 508, -3, -1));
+    }
     // END RECEIVER CODE
 
     delay(10); // update delay after you get it working to be a smaller number like 10ms to account for WiFi transmission overhead
