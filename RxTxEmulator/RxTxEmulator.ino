@@ -32,8 +32,10 @@ WifiPortType portType = WifiPortType::Receiver; // WifiPortType::Transmitter, Wi
 // END WIFI DECLARATIONS
 
 // START RECEIVER DECLARATIONS
-int spinLeftLastState = 0;
-int spinRightLastState = 0;
+// int spinLeftLastState = 0;
+// int spinRightLastState = 0;
+int servo1Limits[2] = {55, 100};
+int servo2Limits[2] = {60, 150};
 class DCMotor
 {
 public:
@@ -83,7 +85,7 @@ Servo servo2;
 int lastArmServoPos = 0;
 void setArmPos(int newPos)
 {
-    lastArmServoPos = constrain(newPos, 0, 160);
+    lastArmServoPos = constrain(newPos, servo1Limits[0], servo1Limits[1]);
     servo1.write(lastArmServoPos);
 }
 
@@ -109,8 +111,8 @@ void setup()
     {
         servo1.attach(servo1Pin);
         servo2.attach(servo2Pin);
-        servo2.write(2);
-        setArmPos(55);
+        servo2.write(servo2Limits[0]);
+        setArmPos(servo1Limits[0]);
     }
     if ((WifiSerial.getPortType() == WifiPortType::Transmitter || WifiSerial.getPortType() == WifiPortType::Emulator))
     {
@@ -187,34 +189,62 @@ void loop()
         int motor1DirectionalModifier = 1;
         int motor2DirectionalModifier = 1;
 
-        if (data.spinLeft > spinLeftLastState)
+        /*if (data.spinLeft) // > spinLeftLastState)
         {
             motor1DirectionalModifier = -1;
-        }
+        } 
         else
         {
             motor1DirectionalModifier = 1;
         }
-        if (data.spinRight > spinRightLastState)
+        if (data.spinRight) // > spinRightLastState)
         {
             motor2DirectionalModifier = -1;
         }
         else
         {
             motor2DirectionalModifier = 1;
-        }
+        }*/
         // Motor Movement
-        if (data.movementJoystick_y > 520)
+        if (data.spinLeft) {
+            motor1.setSpeed(255);
+            motor2.setSpeed(255);
+        } else if (data.spinRight) {
+            motor1.setSpeed(-255);
+            motor2.setSpeed(-255);
+        } else {
+            int yPosition = data.movementJoystick_y;
+            int xPosition = data.movementJoystick_x;
+            int motor1Speed;
+            int motor2Speed;
+            int baseSpeed;
+            if (yPosition > 520 || yPosition < 504) {
+                baseSpeed = map(yPosition, 0, 1023, -255, 255);
+            } else {
+                baseSpeed = 0;
+            }
+            motor1Speed = baseSpeed;
+            motor2Speed = -baseSpeed;
+            if (xPosition < 504) {
+                motor1Speed -= map(xPosition, 0, 504, motor1Speed, 0);
+            }
+            if (xPosition > 520) {
+                motor2Speed -= map(xPosition, 520, 1023, 0, motor2Speed);
+            }
+            motor1.setSpeed(motor1Speed);
+            motor2.setSpeed(motor2Speed);
+        }
+        /*if (data.movementJoystick_y > 520)
         {
             int motorSpeed = map(data.movementJoystick_y, 520, 1023, 0, 255);
             motor1.setSpeed(motor1DirectionalModifier * motorSpeed);
-            motor2.setSpeed(motor2DirectionalModifier * motorSpeed);
+            motor2.setSpeed(-motor2DirectionalModifier * motorSpeed);
         }
         else if (data.movementJoystick_y < 504)
         {
             int motorSpeed = map(data.movementJoystick_y, 0, 504, -255, 0);
             motor1.setSpeed(motor1DirectionalModifier * motorSpeed);
-            motor2.setSpeed(motor2DirectionalModifier * motorSpeed);
+            motor2.setSpeed(-motor2DirectionalModifier * motorSpeed);
         }
         else
         {
@@ -232,19 +262,19 @@ void loop()
         {
             setArmPos(lastArmServoPos + map(data.armJoystick_y, 0, 508, -5, -1));
             delay(20);
-        }
+        }*/
 
         // Claw Movement
         if (data.armButtonState > armButtonLastState)
         { 
             if (armClosed)
             {
-                servo2.write(30); // Open, start at 2 to prevent servo from stalling
+                servo2.write(servo2Limits[0]); // Open, start at 2 to prevent servo from stalling
                 delay(20);
             }
             else
             {
-                servo2.write(150); // Close, 
+                servo2.write(servo2Limits[1]); // Close, 
                 delay(20);
             }
             armClosed = !armClosed;
