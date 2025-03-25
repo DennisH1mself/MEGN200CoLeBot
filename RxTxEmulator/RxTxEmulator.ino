@@ -83,16 +83,7 @@ Servo servo2;
 int lastArmServoPos = 0;
 void setArmPos(int newPos)
 {
-    lastArmServoPos = newPos;
-    if (newPos >= 180)
-    {
-        lastArmServoPos = 180;
-    }
-    else if (newPos <= 0)
-    {
-        lastArmServoPos = 0;
-    }
-
+    lastArmServoPos = constain(newPos, 80, 180);
     servo1.write(lastArmServoPos);
 }
 
@@ -235,23 +226,26 @@ void loop()
         if (data.armJoystick_y >= 520)
         {
             setArmPos(lastArmServoPos + map(data.armJoystick_y, 520, 1023, 1, 5));
+            delay(20);
         }
         if (data.armJoystick_y <= 508)
         {
             setArmPos(lastArmServoPos + map(data.armJoystick_y, 0, 508, -5, -1));
+            delay(20);
         }
 
         // Claw Movement
         if (data.armButtonState > armButtonLastState)
-        {
-            
+        { 
             if (armClosed)
             {
-                servo2.write(0); // Open
+                servo2.write(2); // Open, start at 2 to prevent servo from stalling
+                delay(20);
             }
             else
             {
-                servo2.write(180); // Close
+                servo2.write(180); // Close, 
+                delay(20);
             }
             armClosed = !armClosed;
         }
