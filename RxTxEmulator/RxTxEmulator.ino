@@ -83,7 +83,7 @@ Servo servo2;
 int lastArmServoPos = 0;
 void setArmPos(int newPos)
 {
-    lastArmServoPos = constain(newPos, 80, 180);
+    lastArmServoPos = constrain(newPos, 0, 160);
     servo1.write(lastArmServoPos);
 }
 
@@ -109,8 +109,8 @@ void setup()
     {
         servo1.attach(servo1Pin);
         servo2.attach(servo2Pin);
-        servo2.write(90);
-        setArmPos(0);
+        servo2.write(2);
+        setArmPos(55);
     }
     if ((WifiSerial.getPortType() == WifiPortType::Transmitter || WifiSerial.getPortType() == WifiPortType::Emulator))
     {
@@ -239,12 +239,12 @@ void loop()
         { 
             if (armClosed)
             {
-                servo2.write(2); // Open, start at 2 to prevent servo from stalling
+                servo2.write(30); // Open, start at 2 to prevent servo from stalling
                 delay(20);
             }
             else
             {
-                servo2.write(180); // Close, 
+                servo2.write(150); // Close, 
                 delay(20);
             }
             armClosed = !armClosed;
