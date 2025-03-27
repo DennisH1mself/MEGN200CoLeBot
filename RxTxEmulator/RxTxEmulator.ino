@@ -207,6 +207,7 @@ void loop()
         Serial.println(data.spinLeft);
         Serial.print("Spin Right: ");
         Serial.println(data.spinRight);
+
         // END SERIAL OUTPUT CHECK
 
         // RECEIVER CODE
