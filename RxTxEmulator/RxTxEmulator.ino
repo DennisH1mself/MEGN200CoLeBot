@@ -1,5 +1,5 @@
 /*
-THE DOZERS -- BASIC FUNCTION TEST CODE
+THE DOZERS -- Colebot #3 Code
 
 Dennis Porter
 Owen Rolo
@@ -34,8 +34,15 @@ WifiPortType portType = WifiPortType::Receiver; // WifiPortType::Transmitter, Wi
 // START RECEIVER DECLARATIONS
 // int spinLeftLastState = 0;
 // int spinRightLastState = 0;
-int servo1Limits[2] = {55, 100};
-int servo2Limits[2] = {60, 150};
+int maxTurnSubtracter = 200;
+int minTurnSubtracter = 50;
+int dumpServoPos = 125;
+int objectServoPos = 56;
+int clampClosed = 71;
+int clampOpen = 20;
+int servo1Limits[2] = {objectServoPos-5, dumpServoPos+20};
+int servo2Limits[2] = {clampOpen-5, clampClosed+10};
+
 class DCMotor
 {
 public:
@@ -76,8 +83,8 @@ private:
 const int servo1Pin = A0; // 9
 const int servo2Pin = A1; // 10
 
-DCMotor motor2(6, 5, 7); // DCMotor motor2(5, 4, 3);
-DCMotor motor1(3, 2, 4); // DCMotor motor1(6, 7, 8);
+DCMotor motor2(6, 5, 7); // DCMotor motor2(5, 4, 3); // RIGHT
+DCMotor motor1(3, 2, 4); // DCMotor motor1(6, 7, 8); // LEFT
 
 Servo servo1;
 Servo servo2;
@@ -111,8 +118,8 @@ void setup()
     {
         servo1.attach(servo1Pin);
         servo2.attach(servo2Pin);
-        servo2.write(servo2Limits[0]);
-        setArmPos(servo1Limits[0]);
+        setArmPos(dumpServoPos);//(servo1Limits[0]);
+        servo2.write(clampClosed); //(servo2Limits[0]);
     }
     if ((WifiSerial.getPortType() == WifiPortType::Transmitter || WifiSerial.getPortType() == WifiPortType::Emulator))
     {
@@ -225,14 +232,29 @@ void loop()
             }
             motor1Speed = baseSpeed;
             motor2Speed = -baseSpeed;
+            
             if (xPosition < 504) {
-                motor1Speed -= map(xPosition, 0, 504, motor1Speed, 0);
+                int thero = map(xPosition, 0, 504, motor2Speed, minTurnSubtracter);
+                if (thero >= maxTurnSubtracter) {
+                  thero = maxTurnSubtracter;
+                }
+                motor2Speed -= thero; // RIGHT
             }
             if (xPosition > 520) {
-                motor2Speed -= map(xPosition, 520, 1023, 0, motor2Speed);
+              
+                int thero = map(xPosition, 520, 1023, minTurnSubtracter, motor1Speed);
+                if (thero >= maxTurnSubtracter) {
+                  thero = maxTurnSubtracter;
+                }
+                
+                motor1Speed -= thero; // LEFT
             }
             motor1.setSpeed(motor1Speed);
             motor2.setSpeed(motor2Speed);
+            Serial.print("Motor 1 Speed: ");
+            Serial.println(motor1Speed);
+            Serial.print("Motor 2 Speed: ");
+            Serial.println(motor2Speed);
         }
         /*if (data.movementJoystick_y > 520)
         {
