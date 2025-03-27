@@ -131,7 +131,7 @@ void setup()
         servo1.attach(servo1Pin);
         servo2.attach(servo2Pin);
         setArmPos(dumpServoPos);//(servo1Limits[0]);
-        ssetClampPos(clampClosed); //(servo2Limits[0]);
+        setClampPos(clampClosed); //(servo2Limits[0]);
     }
     if ((WifiSerial.getPortType() == WifiPortType::Transmitter || WifiSerial.getPortType() == WifiPortType::Emulator))
     {
@@ -178,7 +178,7 @@ void loop()
         Serial.println(data.spinLeft);
         Serial.print("Spin Right: ");
         Serial.println(data.spinRight);
-        Serual.print("Arm Button: ");
+        Serial.print("Arm Button: ");
         Serial.println(data.armButton);
         Serial.print("Clamp Joystick: ");
         Serial.println(data.clampJoystick);
