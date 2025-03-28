@@ -7,6 +7,10 @@ Lily Orth
 Carlton Engelhardt
 */
 
+// SETTINGS
+const int configuration = 1; // 1 for original, 2 for 2 axel with trigger buttons, 3 for dance
+// END SETTING
+
 // LIBRARIES
 #include "WifiPort.h"
 #include <Servo.h>
@@ -19,8 +23,8 @@ struct DataPacket
     int AnalogCheck;
     int movementJoystick_y;
     int movementJoystick_x;
-    int armJoystick_y;
-    int armButtonState;
+    int armJoystick;
+    int clampButton;
     int spinLeft;
     int spinRight;
     int armButton;
@@ -36,15 +40,20 @@ WifiPortType portType = WifiPortType::Receiver; // WifiPortType::Transmitter, Wi
 // START RECEIVER DECLARATIONS
 // int spinLeftLastState = 0;
 // int spinRightLastState = 0;
+
 const int maxTurnSubtracter = 200;
 const int minTurnSubtracter = 50;
+const int upperJoystickLimit = 525;
+const int lowerJoystickLimit = 510;
+const int joystickCustomMod = 100;
+
 const int dumpServoPos = 125;
-const int objectServoPos = 56;
-const int clampClosed = 71;
+const int objectServoPos = 56; // 65; // 56;
+const int clampClosed = 71; //65; // 71;
 const int clampOpen = 20;
 const int spinSpeed = 150;
-int servo1Limits[2] = {objectServoPos-5, dumpServoPos+20};
-int servo2Limits[2] = {clampOpen-5, clampClosed+10};
+int servo1Limits[2] = {objectServoPos, dumpServoPos + 20};
+int servo2Limits[2] = {clampOpen - 5, clampClosed};
 
 class DCMotor
 {
@@ -99,26 +108,33 @@ void setArmPos(int newPos)
 {
     lastArmServoPos = constrain(newPos, servo1Limits[0], servo1Limits[1]);
     servo1.write(lastArmServoPos);
+    delay(20);
 }
 void setClampPos(int newPos)
 {
     lastClampServoPos = constrain(newPos, servo2Limits[0], servo2Limits[1]);
     servo2.write(lastClampServoPos);
+    delay(20);
 }
 
 bool armButtonLastState = 0;
-bool armClosed = 0;
+bool clampButtonLastState = 0;
+bool isClampClosed = 0;
+bool isArmDown = 0;
 // END RECEIVER DECLARATIONS
 
 // START TRANSMITTER DECLARATIONS
 const int movementJoystick_y = A0;
 const int movementJoystick_x = A1;
+
 const int armJoystick = A2;
-const int armJoystickButton = 12;
-const int spinLeft = A4;
-const int spinRight = A5;
 const int clampJoystick = A3;
-const int armButton = 2;
+
+const int clampButton = A5;
+const int armButton = A4;
+
+const int spinLeft = 12;
+const int spinRight = 2;
 // END TRANSMITTER DECLARATIONS
 
 void setup()
@@ -130,18 +146,26 @@ void setup()
     {
         servo1.attach(servo1Pin);
         servo2.attach(servo2Pin);
-        setArmPos(dumpServoPos);//(servo1Limits[0]);
-        setClampPos(clampClosed); //(servo2Limits[0]);
+
+        setArmPos(dumpServoPos); //(servo1Limits[0]);
+        isArmDown = 0;
+
+        setClampPos(clampOpen); //(servo2Limits[0]);
+        isClampClosed = 0;
     }
     if ((WifiSerial.getPortType() == WifiPortType::Transmitter || WifiSerial.getPortType() == WifiPortType::Emulator))
     {
         pinMode(movementJoystick_y, INPUT);
         pinMode(movementJoystick_x, INPUT);
+
         pinMode(armJoystick, INPUT);
-        pinMode(armJoystickButton, INPUT_PULLUP);
+        pinMode(clampJoystick, INPUT);
+
         pinMode(spinLeft, INPUT_PULLUP);
         pinMode(spinRight, INPUT_PULLUP);
+
         pinMode(armButton, INPUT_PULLUP);
+        pinMode(clampButton, INPUT_PULLUP);
     }
 }
 
@@ -155,10 +179,13 @@ void loop()
         data.AnalogCheck = millis(); // analogRead(A0);
         data.movementJoystick_y = analogRead(movementJoystick_y);
         data.movementJoystick_x = analogRead(movementJoystick_x);
-        data.armJoystick_y = analogRead(armJoystick);
-        data.armButtonState = !digitalRead(armJoystickButton);
-        data.armButton = !digitalRead(armButton);
+
+        data.armJoystick = analogRead(armJoystick);
         data.clampJoystick = analogRead(clampJoystick);
+
+        data.armButton = !digitalRead(armButton);
+        data.clampButton = !digitalRead(clampButton);
+
         data.spinLeft = !digitalRead(spinLeft);
         data.spinRight = !digitalRead(spinRight);
         // END DATA PACKET
@@ -166,22 +193,26 @@ void loop()
         // SERIAL OUTPUT CHECK
         Serial.print("Sending: ");
         Serial.println(data.AnalogCheck);
+
         Serial.print("Y-movement: ");
         Serial.println(data.movementJoystick_y);
         Serial.print("X-movement: ");
         Serial.println(data.movementJoystick_x);
-        Serial.print("Arm-movement: ");
-        Serial.println(data.armJoystick_y);
-        Serial.print("Button State: ");
-        Serial.println(data.armButtonState);
+
+        Serial.print("Arm Joystick: ");
+        Serial.println(data.armJoystick);
+        Serial.print("Clamp Joystick: ");
+        Serial.println(data.clampJoystick);
+
+        Serial.print("Arm Button State: ");
+        Serial.println(data.armButton);
+        Serial.print("Clamp Button State: ");
+        Serial.println(data.clampButton);
+
         Serial.print("Spin Left: ");
         Serial.println(data.spinLeft);
         Serial.print("Spin Right: ");
         Serial.println(data.spinRight);
-        Serial.print("Arm Button: ");
-        Serial.println(data.armButton);
-        Serial.print("Clamp Joystick: ");
-        Serial.println(data.clampJoystick);
         // END SERIAL OUTPUT CHECK
 
         if (!WifiSerial.sendData(data))
@@ -190,158 +221,253 @@ void loop()
 
     if ((WifiSerial.getPortType() == WifiPortType::Receiver || WifiSerial.getPortType() == WifiPortType::Emulator) && WifiSerial.checkForData())
     {
-        data = WifiSerial.getData();
+        if (configuration == 1)
+        {
+            data = WifiSerial.getData();
 
-        // SERIAL OUTPUT CHECK
-        Serial.print("Received: ");
-        Serial.println(data.AnalogCheck);
-        Serial.print("Y-movement: ");
-        Serial.println(data.movementJoystick_y);
-        Serial.print("X-movement: ");
-        Serial.println(data.movementJoystick_x);
-        Serial.print("Arm-movement: ");
-        Serial.println(data.armJoystick_y);
-        Serial.print("Button State: ");
-        Serial.println(data.armButtonState);
-        Serial.print("Spin Left: ");
-        Serial.println(data.spinLeft);
-        Serial.print("Spin Right: ");
-        Serial.println(data.spinRight);
+            // SERIAL OUTPUT CHECK
+            Serial.print("Received: ");
+            Serial.println(data.AnalogCheck);
 
-        // END SERIAL OUTPUT CHECK
+            Serial.print("Y-movement: ");
+            Serial.println(data.movementJoystick_y);
+            Serial.print("X-movement: ");
+            Serial.println(data.movementJoystick_x);
 
-        // RECEIVER CODE
-        // Motor Direction
-        int motor1DirectionalModifier = 1;
-        int motor2DirectionalModifier = 1;
+            Serial.print("Arm Joystick: ");
+            Serial.println(data.armJoystick);
+            Serial.print("Clamp Joystick: ");
+            Serial.println(data.clampJoystick);
 
-        /*if (data.spinLeft) // > spinLeftLastState)
-        {
-            motor1DirectionalModifier = -1;
-        } 
-        else
-        {
-            motor1DirectionalModifier = 1;
-        }
-        if (data.spinRight) // > spinRightLastState)
-        {
-            motor2DirectionalModifier = -1;
-        }
-        else
-        {
-            motor2DirectionalModifier = 1;
-        }*/
-        // Motor Movement
+            Serial.print("Arm Button State: ");
+            Serial.println(data.armButton);
+            Serial.print("Clamp Button State: ");
+            Serial.println(data.clampButton);
 
-        if (data.spinLeft) {
-            motor1.setSpeed(spinSpeed);
-            motor2.setSpeed(spinSpeed);
-        } else if (data.spinRight) {
-            motor1.setSpeed(-spinSpeed);
-            motor2.setSpeed(-spinSpeed);
-        } else {
-            int yPosition = data.movementJoystick_y;
-            int xPosition = data.movementJoystick_x;
-            int motor1Speed;
-            int motor2Speed;
-            int baseSpeed;
-            if (yPosition > 520 || yPosition < 504) {
-                baseSpeed = map(yPosition, 0, 1023, -255, 255);
-            } else {
-                baseSpeed = 0;
-            }
-            motor1Speed = baseSpeed;
-            motor2Speed = -baseSpeed;
-            
-            if (xPosition < 514) {
-                int thero = map(xPosition, 0, 504, motor2Speed, minTurnSubtracter);
-                if (thero >= maxTurnSubtracter) {
-                  thero = maxTurnSubtracter;
-                }
-                motor2Speed -= thero; // RIGHT
-            }
-            if (xPosition > 518) {
-              
-                int thero = map(xPosition, 520, 1023, minTurnSubtracter, motor1Speed);
-                if (thero >= maxTurnSubtracter) {
-                  thero = maxTurnSubtracter;
-                }
-                
-                motor1Speed -= thero; // LEFT
-            }
-            motor1.setSpeed(motor1Speed);
-            motor2.setSpeed(motor2Speed);
-            Serial.print("Motor 1 Speed: ");
-            Serial.println(motor1Speed);
-            Serial.print("Motor 2 Speed: ");
-            Serial.println(motor2Speed);
-        }
-        /*if (data.movementJoystick_y > 520)
-        {
-            int motorSpeed = map(data.movementJoystick_y, 520, 1023, 0, 255);
-            motor1.setSpeed(motor1DirectionalModifier * motorSpeed);
-            motor2.setSpeed(-motor2DirectionalModifier * motorSpeed);
-        }
-        else if (data.movementJoystick_y < 504)
-        {
-            int motorSpeed = map(data.movementJoystick_y, 0, 504, -255, 0);
-            motor1.setSpeed(motor1DirectionalModifier * motorSpeed);
-            motor2.setSpeed(-motor2DirectionalModifier * motorSpeed);
-        }
-        else
-        {
-            motor1.setSpeed(0);
-            motor2.setSpeed(0);
-        }*/
+            Serial.print("Spin Left: ");
+            Serial.println(data.spinLeft);
+            Serial.print("Spin Right: ");
+            Serial.println(data.spinRight);
+            // END SERIAL OUTPUT CHECK
 
-        // Arm Movement
-        if (data.armJoystick_y >= 520)
-        {
-            setArmPos(lastArmServoPos + map(data.armJoystick_y, 520, 1023, 1, 5));
-            delay(20);
-        }
-        if (data.armJoystick_y <= 508)
-        {
-            setArmPos(lastArmServoPos + map(data.armJoystick_y, 0, 508, -5, -1));
-            delay(20);
-        }
-        if (data.clampJoystick >= 520)
-        {
-            setClampPos(lastClampServoPos + map(data.clampJoystick, 520, 1023, 1, 3));
-            delay(20);
-        }
-        if (data.clampJoystick <= 508)
-        {
-            setClampPos(lastClampServoPos + map(data.clampJoystick, 0, 508, -3, -1));
-            delay(20);
-        }
-        
-        // Claw Movement
-        if (data.armButtonState > armButtonLastState)
-        { 
-            if (armClosed)
+            // RECEIVER CODE
+            // Motor Direction
+            int motor1DirectionalModifier = 1;
+            int motor2DirectionalModifier = 1;
+
+            /*if (data.spinLeft) // > spinLeftLastState)
             {
-                setClampPos(clampOpen); // Open, start at 2 to prevent servo from stalling
-                delay(20);
+                motor1DirectionalModifier = -1;
             }
             else
             {
-                setClampPos(clampClosed); // Close, 
+                motor1DirectionalModifier = 1;
+            }
+            if (data.spinRight) // > spinRightLastState)
+            {
+                motor2DirectionalModifier = -1;
+            }
+            else
+            {
+                motor2DirectionalModifier = 1;
+            }*/
+            // Motor Movement
+
+            if (data.spinLeft)
+            {
+                motor1.setSpeed(spinSpeed);
+                motor2.setSpeed(spinSpeed);
+            }
+            else if (data.spinRight)
+            {
+                motor1.setSpeed(-spinSpeed);
+                motor2.setSpeed(-spinSpeed);
+            }
+            else
+            {
+                int yPosition = data.movementJoystick_y;
+                int xPosition = data.movementJoystick_x;
+                int motor1Speed;
+                int motor2Speed;
+                int baseSpeed;
+
+                if (yPosition > upperJoystickLimit || yPosition < lowerJoystickLimit)
+                {
+                    baseSpeed = map(yPosition, 0, 1023, -255, 255);
+                }
+                else
+                {
+                    baseSpeed = 0;
+                }
+                int turnAdjustment = 0;
+                const int customMod = 100;
+                const int lowerLimMod = lowerJoystickLimit - customMod;
+                const int upperLimMod = upperJoystickLimit + customMod;
+                if (!(yPosition < upperLimMod && yPosition > lowerLimMod))
+                {
+                    if (xPosition < lowerLimMod)
+                    {
+                        turnAdjustment = -constrain(map(xPosition, 0, lowerLimMod, -150, 0), -baseSpeed, 0);
+                    }
+                    else if (xPosition > upperLimMod)
+                    {
+                        turnAdjustment = -constrain(map(xPosition, upperLimMod, 1023, 0, 150), 0, baseSpeed);
+                    }
+                } else {
+                    if (xPosition < lowerLimMod)
+                    {
+                        turnAdjustment = map(xPosition, 0, lowerLimMod, -100, 0);
+                    }
+                    else if (xPosition > upperLimMod)
+                    {
+                        turnAdjustment = map(xPosition, upperLimMod, 1023, 0, 100);
+                    }
+                }
+
+                /*
+                int turnAdjustment = 0;
+                const int mod2 = 0;
+                if (yPosition < upperJoystickLimit && yPosition > lowerJoystickLimit)
+                {
+                    if (xPosition < lowerJoystickLimit + mod2)
+                    {
+                        turnAdjustment = map(xPosition, 0, lowerJoystickLimit, -100, 0);
+                    }
+                    else if (xPosition > upperJoystickLimit - mod2)
+                    {
+                        turnAdjustment = map(xPosition, upperJoystickLimit, 1023, 0, 100);
+                    }
+                } else {
+                    if (xPosition < lowerJoystickLimit + mod2)
+                    {
+                        turnAdjustment = map(xPosition, 0, lowerJoystickLimit, -150, -75);
+                    }
+                    else if (xPosition > upperJoystickLimit - mod2)
+                    {
+                        turnAdjustment = map(xPosition, upperJoystickLimit, 1023, 75, 150);
+                    }
+                }*/
+
+                motor1Speed = -constrain(baseSpeed - turnAdjustment, -255, 255);
+                motor2Speed = constrain(baseSpeed + turnAdjustment, -255, 255);
+                /*
+                if (yPosition > upperJoystickLimit || yPosition < lowerJoystickLimit)
+                {
+                    baseSpeed = map(yPosition, 0, 1023, -255, 255);
+                }
+                else
+                {
+                    baseSpeed = 0;
+                }
+                motor1Speed = baseSpeed;
+                motor2Speed = -baseSpeed;
+
+                if (xPosition < lowerJoystickLimit) {
+                    int thero = map(xPosition, 0, lowerJoystickLimit, motor2Speed, minTurnSubtracter);
+                    if (thero >= maxTurnSubtracter) {
+                      thero = maxTurnSubtracter;
+                    }
+                    motor2Speed -= thero; // RIGHT
+                }
+                if (xPosition > upperJoystickLimit) {
+
+                    int thero = map(xPosition, upperJoystickLimit, 1023, minTurnSubtracter, motor1Speed);
+                    if (thero >= maxTurnSubtracter) {
+                      thero = maxTurnSubtracter;
+                    }
+
+                    motor1Speed -= thero; // LEFT
+                }*/
+                motor1.setSpeed(motor1Speed);
+                motor2.setSpeed(motor2Speed);
+                Serial.print("Motor 1 Speed: ");
+                Serial.println(motor1Speed);
+                Serial.print("Motor 2 Speed: ");
+                Serial.println(motor2Speed);
+            }
+            /*if (data.movementJoystick_y > 520)
+            {
+                int motorSpeed = map(data.movementJoystick_y, 520, 1023, 0, 255);
+                motor1.setSpeed(motor1DirectionalModifier * motorSpeed);
+                motor2.setSpeed(-motor2DirectionalModifier * motorSpeed);
+            }
+            else if (data.movementJoystick_y < 504)
+            {
+                int motorSpeed = map(data.movementJoystick_y, 0, 504, -255, 0);
+                motor1.setSpeed(motor1DirectionalModifier * motorSpeed);
+                motor2.setSpeed(-motor2DirectionalModifier * motorSpeed);
+            }
+            else
+            {
+                motor1.setSpeed(0);
+                motor2.setSpeed(0);
+            }*/
+
+            // Arm Movement
+            if (data.armJoystick >= upperJoystickLimit + 100)
+            {
+                setArmPos(lastArmServoPos + map(data.armJoystick, upperJoystickLimit, 1023, 1, 3));
                 delay(20);
             }
-            armClosed = !armClosed;
-        }
-        if (data.armButton)
-        {
-            if (abs(lastArmServoPos - dumpServoPos) < abs(lastArmServoPos - objectServoPos)) {
-                setArmPos(objectServoPos);
-            } else {
-                setArmPos(dumpServoPos);
+            if (data.armJoystick <= lowerJoystickLimit - 100)
+            {
+                setArmPos(lastArmServoPos + map(data.armJoystick, 0, lowerJoystickLimit, -3, -1));
+                delay(20);
             }
-        }
-        armButtonLastState = data.armButtonState;
-        // END RECEIVER CODE
+            if (data.clampJoystick >= upperJoystickLimit + 100)
+            {
+                setClampPos(lastClampServoPos + map(data.clampJoystick, upperJoystickLimit, 1023, 1, 3));
+                delay(20);
+            }
+            if (data.clampJoystick <= lowerJoystickLimit - 100)
+            {
+                setClampPos(lastClampServoPos + map(data.clampJoystick, 0, lowerJoystickLimit, -3, -1));
+                delay(20);
+            }
 
-        delay(10); // update delay after you get it working to be a smaller number like 10ms to account for WiFi transmission overhead
+            // Claw Movement
+            if (data.clampButton > clampButtonLastState)
+            {
+                if (isClampClosed)
+                {
+                    setClampPos(clampOpen); // Open, start at 2 to prevent servo from stalling
+                    delay(20);
+                }
+                else
+                {
+                    setClampPos(clampClosed); // Close,
+                    delay(20);
+                }
+                isClampClosed = !isClampClosed;
+            }
+            if (data.armButton > armButtonLastState)
+            {
+                if (isArmDown)
+                {
+                    setArmPos(dumpServoPos); // Open, start at 2 to prevent servo from stalling
+                    delay(20);
+                }
+                else
+                {
+                    setArmPos(objectServoPos); // Close,
+                    delay(20);
+                }
+                isArmDown = !isArmDown;
+            }
+            /*if (data.armButton > clampButtonLastState)
+            {
+                if (abs(lastArmServoPos - dumpServoPos) < abs(lastArmServoPos - objectServoPos)) {
+                    setArmPos(objectServoPos);
+                } else {
+                    setArmPos(dumpServoPos);
+                }
+                delay(100);
+            }*/
+            clampButtonLastState = data.clampButton;
+            armButtonLastState = data.armButton;
+            // END RECEIVER CODE
+
+            delay(10); // update delay after you get it working to be a smaller number like 10ms to account for WiFi transmission overhead
+        }
     }
 }
