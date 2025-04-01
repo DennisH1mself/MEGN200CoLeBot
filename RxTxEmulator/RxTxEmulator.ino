@@ -43,8 +43,8 @@ WifiPortType portType = WifiPortType::Receiver; // WifiPortType::Transmitter, Wi
 
 const int maxTurnSubtracter = 200;
 const int minTurnSubtracter = 50;
-const int upperJoystickLimit = 525;
-const int lowerJoystickLimit = 510;
+const int upperJoystickLimit = 535;
+const int lowerJoystickLimit = 505;
 const int joystickCustomMod = 100;
 
 const int dumpServoPos = 125;
