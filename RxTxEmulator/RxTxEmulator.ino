@@ -7,8 +7,12 @@ Lily Orth
 Carlton Engelhardt
 */
 
+// 45in / 5.3s
+
+float speedOf255 = 45.0/5.3;
+
 // SETTINGS
-const int configuration = 1; // 1 for original, 2 for 2 axel with trigger buttons, 3 for dance
+const int configuration = 2; // 1 for original, 2 for 2 axel with trigger buttons, 3 for dance
 // END SETTING
 
 // LIBRARIES
@@ -48,8 +52,8 @@ const int lowerJoystickLimit = 505;
 const int joystickCustomMod = 100;
 
 const int dumpServoPos = 125;
-const int objectServoPos = 56; // 65; // 56;
-const int clampClosed = 71; //65; // 71;
+const int objectServoPos = 56; // 65; // 3:56;
+const int clampClosed = 63; //65; // 3:71;
 const int clampOpen = 20;
 const int spinSpeed = 150;
 int servo1Limits[2] = {objectServoPos, dumpServoPos + 20};
@@ -121,11 +125,65 @@ bool armButtonLastState = 0;
 bool clampButtonLastState = 0;
 bool isClampClosed = 0;
 bool isArmDown = 0;
+
+// START AUTOPILOT FUNCTIONS
+void forward(int length) {
+  float delayX = 1/speedOf255 * length * 1000;
+  Serial.print("Forward (in): ");
+  Serial.println(length);
+  Serial.println(delayX);
+  motor1.setSpeed(235);
+  motor2.setSpeed(-255);
+  delay(delayX);
+  motor1.setSpeed(0);
+  motor2.setSpeed(0);
+  delay(500);
+}
+/*
+void turn(int radians) { // left is positive
+  float delayX = 1/angularSpeed * radians * 1000;
+  Serial.print("Turn (rads): ");
+  Serial.println(radians);
+  Serial.println(delayX);
+  motor1.setSpeed(-150);
+  motor2.setSpeed(-150);
+  delay(delayX);
+  motor1.setSpeed(0);
+  motor2.setSpeed(0);
+}*/
+void turn180() {
+  float radius = 10.6/2.0;
+  float angularSpeed = speedOf255/radius;
+  float delayX = 1/angularSpeed * degToRad(90) * 1000;
+  Serial.print("Turn (rads): pi");
+  Serial.println(delayX);
+  motor1.setSpeed(-255);
+  motor2.setSpeed(-255);
+  delay(delayX);
+  motor1.setSpeed(0);
+  motor2.setSpeed(0);
+  delay(500);
+}
+void turn90(int mod) {
+  float radius = 4.9/2.0;
+  float angularSpeed = speedOf255/radius;
+  float delayX = 1/angularSpeed * degToRad(90) * 1000;
+  Serial.print("Turn (rads): pi/2");
+  Serial.println(delayX);
+  motor1.setSpeed(-255 * mod);
+  motor2.setSpeed(-255 * mod);
+  delay(delayX);
+  motor1.setSpeed(0);
+  motor2.setSpeed(0);
+  delay(500);
+}
+// END AUTOPILOT FUNCTIONS
+
 // END RECEIVER DECLARATIONS
 
 // START TRANSMITTER DECLARATIONS
-const int movementJoystick_y = A0;
-const int movementJoystick_x = A1;
+const int movementJoystick_y = A1;
+const int movementJoystick_x = A0;
 
 const int armJoystick = A2;
 const int clampJoystick = A3;
@@ -136,7 +194,9 @@ const int armButton = A4;
 const int spinLeft = 12;
 const int spinRight = 2;
 // END TRANSMITTER DECLARATIONS
-
+float degToRad(int deg) {
+  return deg * 3.1415926535897932384626433832795/180;
+}
 void setup()
 {
     // DONT USE PIN13 FOR ANY SENSOR OR ACTUATORS
@@ -152,6 +212,27 @@ void setup()
 
         setClampPos(clampOpen); //(servo2Limits[0]);
         isClampClosed = 0;
+
+        if (configuration == 2) {
+          // forward(70);
+          
+          turn180();
+          forward(10);
+          turn90(1);
+          forward(15);
+          turn90(1);
+          forward(70);
+          turn90(-1);
+          forward(20);
+          turn90(-1);
+          forward(70);
+          /*
+          forward(68);
+          turn(degToRad(180));
+          forward(15);
+          turn(degToRad(90));
+          forward(24);*/
+        }
     }
     if ((WifiSerial.getPortType() == WifiPortType::Transmitter || WifiSerial.getPortType() == WifiPortType::Emulator))
     {
@@ -469,5 +550,10 @@ void loop()
 
             delay(10); // update delay after you get it working to be a smaller number like 10ms to account for WiFi transmission overhead
         }
+        /*if (configuration == 3) {
+          void funky() {
+            Serial.println("funky");
+          }
+        }*/
     }
 }
