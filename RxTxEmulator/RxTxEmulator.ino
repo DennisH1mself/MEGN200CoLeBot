@@ -194,7 +194,7 @@ void closeClap() {
     Serial.println("Clap");
     setClampPos(clampOpen);
 }
-void toDelay(int seconds, int frame) {
+int toDelay(int seconds, int frame) {
     Serial.println("Delay");
     return seconds * 1000 + (frame*1000.0/60.0);
 }
@@ -616,7 +616,7 @@ void twoHopsThisTime2() { // 1:32:00 to 1:33:50
     setClampPos(clampOpen);
     delay(toDelay(93, 10) - toDelay(92, 0) - 1200);
 }
-void rightFootTwoStomps() { // 1:33:50 to 1:35:00
+void rightFootTwoStomps2() { // 1:33:50 to 1:35:00
     delay(500);
     setArmPos(objectServoPos);
     setClampPos(clampClosed);
@@ -625,7 +625,7 @@ void rightFootTwoStomps() { // 1:33:50 to 1:35:00
     setClampPos(clampOpen);
     delay(toDelay(95, 0) - toDelay(93, 10) - 1000);
 }
-void leftFootTwoStomps() { // 1:35:00 to 1:36:20
+void leftFootTwoStomps2() { // 1:35:00 to 1:36:20
     delay(200);
     setArmPos(objectServoPos);
     setClampPos(clampClosed);
@@ -665,7 +665,7 @@ void getFunkyWitIt() { // 1:39:50 to 1:46:50
     motor2.setSpeed(0);
     delay(toDelay(106, 50) - toDelay(99, 50) - (1200*4));
 }
-void chaChaRealSmooth() {
+void chaChaRealSmooth2() {
     Serial.println("Cha Cha");
     motor1.setSpeed(150);
     motor2.setSpeed(-150);
@@ -720,6 +720,11 @@ void chaChaSlide()
     takeItBack4();
     twoHopsThisTime();
     twoHopsThisTime2();
+    rightFootTwoStomps2();
+    leftFootTwoStomps2();
+    handsOnYourKnees();
+    getFunkyWitIt();
+    chaChaRealSmooth2();
     
 }
 // END CHA CHA
