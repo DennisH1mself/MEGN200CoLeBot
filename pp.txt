@@ -1,0 +1,529 @@
+void intro() {
+    Serial.println("Cha Cha Slide");
+    delay(toDelay(17, 35));
+}
+void funky1() { // 17:35s to 24:42s
+    Serial.println("Funky");
+    motor1.setSpeed(150);
+    motor2.setSpeed(-150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(1000);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    motor1.setSpeed(-150);
+    motor2.setSpeed(150);
+    delay(1000);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(1000);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(500);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(24, 42) - toDelay(17, 35) - 6500);
+}
+void everybodyClapYourHands() { // 24:42s to 33:25s
+    Serial.println("Clap");
+    
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setClampPosDelayless(clampOpen);
+    delay(700); // 7000
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    setClampPosDelayless(clampClosed);
+    delay(toDelay(33, 25) - toDelay(24, 42) - (700*12));
+}
+
+void toTheLeft1() { // 33:25s to 34:50s
+    float radius = 4.9 / 2.0;
+    float mod = -1;
+    float angularSpeed = speedOf255 / radius;
+    float delayX = 1 / angularSpeed * degToRad(90) * 1000;
+    Serial.print("Turn (rads): pi/2");
+    Serial.println(delayX);
+    motor1.setSpeed(-255 * mod);
+    motor2.setSpeed(-255 * mod);
+    delay(delayX);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(34, 50) - toDelay(33, 25) - (delayX));
+}
+void takeItBack() { // 34:50 to 36:50
+    Serial.println(1000);
+    motor1.setSpeed(-235);
+    motor2.setSpeed(255);
+    delay(1000);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(36, 50) - toDelay(34, 50) - 1000);
+}
+void oneHopThisTime() { // 36:50 to 38:50
+    delay(200);
+    Serial.println("Hop");
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(38, 50) - toDelay(36, 50) - 1200);
+}
+void rightFootLeftStomp() { // 38:50 to 40:25
+    delay(500);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(40, 25) - toDelay(38, 50) - 1000);
+
+}
+void leftFootLeftStomp() { // 40:30 to 43:00
+    delay(500);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(43, 00) - toDelay(40, 25) - 1000);
+}
+void chaChaRealSmooth() { // 43:00 to 46:26
+    Serial.println("Cha Cha");
+    motor1.setSpeed(-150);
+    motor2.setSpeed(-150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    motor1.setSpeed(150);
+    motor2.setSpeed(150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(46, 26) - toDelay(43, 0) - (700*4));
+}
+void turnItOut() { // 46:26 to 48:15
+    float radius = 4.9 / 2.0;
+    float mod = 1;
+    float angularSpeed = speedOf255 / radius;
+    float delayX = 1 / angularSpeed * degToRad(90) * 1000;
+    Serial.print("Turn (rads): pi/2");
+    Serial.println(delayX);
+    motor1.setSpeed(-255 * mod);
+    motor2.setSpeed(-255 * mod);
+    delay(delayX);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(48, 15) - toDelay(46, 26) - (delayX));
+}
+void toTheLeft2() { // 48:15 to 49:50
+    float radius = 4.9 / 2.0;
+    float mod = -1;
+    float angularSpeed = speedOf255 / radius;
+    float delayX = 1 / angularSpeed * degToRad(90) * 1000;
+    Serial.print("Turn (rads): pi/2");
+    Serial.println(delayX);
+    motor1.setSpeed(-255 * mod);
+    motor2.setSpeed(-255 * mod);
+    delay(delayX);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(49, 50) - toDelay(48, 15) - (delayX));
+}
+void takeItBack2() { // 49:50 to 51:50
+    Serial.println(1000);
+    motor1.setSpeed(-235);
+    motor2.setSpeed(255);
+    delay(1000);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(51, 50) - toDelay(49, 50) - 1000);
+}
+void oneHopThisTime2() { // 51:50 to 53:50
+    delay(200);
+    Serial.println("Hop");
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(53, 50) - toDelay(51, 50) - 1200);
+} 
+void rightFootLeftStomp2() { // 53:50 to 55:50
+    delay(500);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(55, 50) - toDelay(53, 50) - 1000);
+
+}
+void leftFootLeftStomp2() { // 55:50 to 57:50
+    delay(500);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(57, 50) - toDelay(55, 50) - 1000);
+}
+void chaChaNowYall() { // 57:50 to 1:01:00
+    Serial.println("Cha Cha");
+    motor1.setSpeed(-150);
+    motor2.setSpeed(-150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    motor1.setSpeed(150);
+    motor2.setSpeed(150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(61, 0) - toDelay(57, 50) - (700*4));
+}
+void toTheRight() { // 1:01:00 to 1:02:50
+    float radius = 4.9 / 2.0;
+    float mod = 1;
+    float angularSpeed = speedOf255 / radius;
+    float delayX = 1 / angularSpeed * degToRad(90) * 1000;
+    Serial.print("Turn (rads): pi/2");
+    Serial.println(delayX);
+    motor1.setSpeed(-255 * mod);
+    motor2.setSpeed(-255 * mod);
+    delay(delayX);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(62, 50) - toDelay(61, 0) - (delayX));
+}
+void toTheLeft3() { // 1:02:50 to 1:04:50
+    float radius = 4.9 / 2.0;
+    float mod = -1;
+    float angularSpeed = speedOf255 / radius;
+    float delayX = 1 / angularSpeed * degToRad(90) * 1000;
+    Serial.print("Turn (rads): pi/2");
+    Serial.println(delayX);
+    motor1.setSpeed(-255 * mod);
+    motor2.setSpeed(-255 * mod);
+    delay(delayX);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(64, 50) - toDelay(62, 50) - (delayX));
+}
+void takeItBack3() { // 1:04:50 to 1:06:50
+    Serial.println(1000);
+    motor1.setSpeed(-235);
+    motor2.setSpeed(255);
+    delay(1000);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(66, 50) - toDelay(64, 50) - 1000);
+}
+void oneHopThisTime3() { // 1:06:39 to 1:08:26
+    delay(200);
+    Serial.println("Hop");
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(68, 26) - toDelay(66, 39) - 1200);
+}
+void oneHopThisTime4() { // 1:08:26 to 1:10:21
+    delay(200);
+    Serial.println("Hop");
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(70, 21) - toDelay(68, 26) - 1200);
+}
+void rightFootTwoStomps() { // 1:10:31 to 1:12:21
+    delay(500);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(72, 21) - toDelay(70, 21) - 1000);
+}
+void leftFootTwoStomps() { // 1:12:21 to 1:14:11
+    delay(500);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(74, 11) - toDelay(72, 21) - 1000);
+}
+void slideToTheLeft() { // 1:14:11 to 1:16:00
+    float radius = 4.9 / 2.0;
+    float mod = -1;
+    float angularSpeed = speedOf255 / radius;
+    float delayX = 1 / angularSpeed * degToRad(90) * 1000;
+    Serial.print("Turn (rads): pi/2");
+    Serial.println(delayX);
+    motor1.setSpeed(-255 * mod);
+    motor2.setSpeed(-255 * mod);
+    delay(delayX);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(76, 0) - toDelay(74, 11) - (delayX));
+}
+void slideToTheRight() { // 1:16:00 to 1:17:50
+    float radius = 4.9 / 2.0;
+    float mod = 1;
+    float angularSpeed = speedOf255 / radius;
+    float delayX = 1 / angularSpeed * degToRad(90) * 1000;
+    Serial.print("Turn (rads): pi/2");
+    Serial.println(delayX);
+    motor1.setSpeed(-255 * mod);
+    motor2.setSpeed(-255 * mod);
+    delay(delayX);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(77, 50) - toDelay(76, 0) - (delayX));
+}
+void crissCross() { // 1:17:50 to 1:19:50
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setClampPosDelayless(clampOpen);
+    delay(500);
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(79, 50) - toDelay(77, 50) - (500*4));
+}
+void crissCross2() { // 1:19:50 to 1:21:50
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setClampPosDelayless(clampOpen);
+    delay(500);
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(81, 50) - toDelay(79, 50) - (500*4));
+}
+void chaChaSlide2() { // 1:21:50 to 1:26:50
+    Serial.println("Cha Cha");
+    motor1.setSpeed(-150);
+    motor2.setSpeed(-150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    motor1.setSpeed(150);
+    motor2.setSpeed(150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(86, 50) - toDelay(81, 50) - (700*4));
+}
+void toTheLeft4() { // 1:26:50 to 1:28:50
+    float radius = 4.9 / 2.0;
+    float mod = -1;
+    float angularSpeed = speedOf255 / radius;
+    float delayX = 1 / angularSpeed * degToRad(90) * 1000;
+    Serial.print("Turn (rads): pi/2");
+    Serial.println(delayX);
+    motor1.setSpeed(-255 * mod);
+    motor2.setSpeed(-255 * mod);
+    delay(delayX);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(88, 50) - toDelay(86, 50) - (delayX));
+}
+void takeItBack4() { // 1:28:50 to 1:30:50
+    Serial.println(1000);
+    motor1.setSpeed(-235);
+    motor2.setSpeed(255);
+    delay(1000);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(90, 50) - toDelay(88, 50) - 1000);
+}
+void twoHopsThisTime() { // 1:30:50 to 1:32:00
+    delay(200);
+    Serial.println("Hop");
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(92, 0) - toDelay(90, 50) - 1200);
+}
+void twoHopsThisTime2() { // 1:32:00 to 1:33:50
+    delay(200);
+    Serial.println("Hop");
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(93, 10) - toDelay(92, 0) - 1200);
+}
+void rightFootTwoStomps2() { // 1:33:50 to 1:35:00
+    delay(500);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(500);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(95, 0) - toDelay(93, 10) - 1000);
+}
+void leftFootTwoStomps2() { // 1:35:00 to 1:36:20
+    delay(200);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(200);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(96, 20) - toDelay(95, 0) - 1000);
+}
+void handsOnYourKnees() { // 1:36:20 to 1:39:50
+    Serial.println("Hands on your knees");
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(2000);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(toDelay(99, 50) - toDelay(96, 20) - 200);
+}
+void getFunkyWitIt() { // 1:39:50 to 1:46:50
+    Serial.println("Get Funky Wit It");
+    motor1.setSpeed(-150);
+    motor2.setSpeed(-150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1200);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(1200);
+    motor1.setSpeed(150);
+    motor2.setSpeed(150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(1200);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(1200);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+    delay(toDelay(106, 50) - toDelay(99, 50) - (1200*4));
+}
+void chaChaRealSmooth2() {
+    Serial.println("Cha Cha");
+    motor1.setSpeed(150);
+    motor2.setSpeed(-150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    motor1.setSpeed(150);
+    motor2.setSpeed(150);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
+    delay(700);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
+    delay(700);
+    motor1.setSpeed(0);
+    motor2.setSpeed(0);
+}
+void chaChaSlide()
+{   
+    intro();
+    funky1();
+    everybodyClapYourHands();
+    toTheLeft1();
+    takeItBack();
+    oneHopThisTime();
+    rightFootLeftStomp();
+    leftFootLeftStomp();
+    chaChaRealSmooth();
+    turnItOut();
+    toTheLeft2();
+    takeItBack2();
+    oneHopThisTime2();
+    rightFootLeftStomp2();
+    leftFootLeftStomp2();
+    chaChaNowYall();
+    toTheRight();
+    toTheLeft3();
+    takeItBack3();
+    oneHopThisTime3();
+    oneHopThisTime4();
+    rightFootTwoStomps();
+    leftFootTwoStomps();
+    slideToTheLeft();
+    slideToTheRight();
+    crissCross();
+    crissCross2();
+    chaChaSlide2();
+    toTheLeft4();
+    takeItBack4();
+    twoHopsThisTime();
+    twoHopsThisTime2();
+    rightFootTwoStomps2();
+    leftFootTwoStomps2();
+    handsOnYourKnees();
+    getFunkyWitIt();
+    chaChaRealSmooth2();
+    
+}

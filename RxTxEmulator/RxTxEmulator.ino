@@ -8,7 +8,7 @@ Carlton Engelhardt
 */
 
 // SETTINGS
-const int configuration = 1; // 1 for original, 2 for autopilot, 3 for dance, 4 for buttons with joystick
+const int configuration = 4; // 1 for original, 2 for autopilot, 3 for dance, 4 for buttons with joystick
 // END SETTING
 
 // LIBRARIES
@@ -45,19 +45,17 @@ const float pi = 3.1415926535897932384626433832795;
 
 const int maxTurnSubtracter = 200;
 const int minTurnSubtracter = 50;
-const int upperJoystickLimit = 535;
+const int upperJoystickLimit = 529;
 const int lowerJoystickLimit = 505;
 const int joystickCustomMod = 100;
 
-const int dumpServoPos = 125;
-const int objectServoPos = 58; // 65; // 3:56;
-const int clampClosed = 66;    // 65; // 3:71;
+const int dumpServoPos = 135;
+const int objectServoPos = 65; // 65; // 3:56;
+const int clampClosed = 74;    // 65; // 3:71;
 const int clampOpen = 20;
 const int spinSpeed = 150;
 int servo1Limits[2] = {objectServoPos, dumpServoPos + 20};
 int servo2Limits[2] = {clampOpen - 5, clampClosed};
-
-
 
 class DCMotor
 {
@@ -115,6 +113,18 @@ void setArmPos(int newPos)
     delay(20);
 }
 void setClampPos(int newPos)
+{
+    lastClampServoPos = constrain(newPos, servo2Limits[0], servo2Limits[1]);
+    servo2.write(lastClampServoPos);
+    delay(20);
+}
+void setArmPosDelayless(int newPos)
+{
+    lastArmServoPos = constrain(newPos, servo1Limits[0], servo1Limits[1]);
+    servo1.write(lastArmServoPos);
+    delay(20);
+}
+void setClampPosDelayless(int newPos)
 {
     lastClampServoPos = constrain(newPos, servo2Limits[0], servo2Limits[1]);
     servo2.write(lastClampServoPos);
@@ -206,63 +216,63 @@ void funky1() { // 17:35s to 24:42s
     Serial.println("Funky");
     motor1.setSpeed(150);
     motor2.setSpeed(-150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(1000);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     motor1.setSpeed(-150);
     motor2.setSpeed(150);
     delay(1000);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(1000);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     motor1.setSpeed(0);
     motor2.setSpeed(0);
     delay(500);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(24, 42) - toDelay(17, 35) - 6500);
 }
 void everybodyClapYourHands() { // 24:42s to 33:25s
     Serial.println("Clap");
     
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(700);
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(700);
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(700);
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(700);
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(700); // 7000
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(700);
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(toDelay(33, 25) - toDelay(24, 42) - (700*12));
 }
 
@@ -292,49 +302,49 @@ void takeItBack() { // 34:50 to 36:50
 void oneHopThisTime() { // 36:50 to 38:50
     delay(200);
     Serial.println("Hop");
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(38, 50) - toDelay(36, 50) - 1200);
 }
 void rightFootLeftStomp() { // 38:50 to 40:25
     delay(500);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(40, 25) - toDelay(38, 50) - 1000);
 
 }
 void leftFootLeftStomp() { // 40:30 to 43:00
     delay(500);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(43, 00) - toDelay(40, 25) - 1000);
 }
 void chaChaRealSmooth() { // 43:00 to 46:26
     Serial.println("Cha Cha");
     motor1.setSpeed(-150);
     motor2.setSpeed(-150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(700);
     motor1.setSpeed(150);
     motor2.setSpeed(150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(700);
     motor1.setSpeed(0);
     motor2.setSpeed(0);
@@ -380,49 +390,49 @@ void takeItBack2() { // 49:50 to 51:50
 void oneHopThisTime2() { // 51:50 to 53:50
     delay(200);
     Serial.println("Hop");
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(53, 50) - toDelay(51, 50) - 1200);
 } 
 void rightFootLeftStomp2() { // 53:50 to 55:50
     delay(500);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(55, 50) - toDelay(53, 50) - 1000);
 
 }
 void leftFootLeftStomp2() { // 55:50 to 57:50
     delay(500);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(57, 50) - toDelay(55, 50) - 1000);
 }
 void chaChaNowYall() { // 57:50 to 1:01:00
     Serial.println("Cha Cha");
     motor1.setSpeed(-150);
     motor2.setSpeed(-150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(700);
     motor1.setSpeed(150);
     motor2.setSpeed(150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(700);
     motor1.setSpeed(0);
     motor2.setSpeed(0);
@@ -468,39 +478,39 @@ void takeItBack3() { // 1:04:50 to 1:06:50
 void oneHopThisTime3() { // 1:06:39 to 1:08:26
     delay(200);
     Serial.println("Hop");
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(68, 26) - toDelay(66, 39) - 1200);
 }
 void oneHopThisTime4() { // 1:08:26 to 1:10:21
     delay(200);
     Serial.println("Hop");
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(70, 21) - toDelay(68, 26) - 1200);
 }
 void rightFootTwoStomps() { // 1:10:31 to 1:12:21
     delay(500);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(72, 21) - toDelay(70, 21) - 1000);
 }
 void leftFootTwoStomps() { // 1:12:21 to 1:14:11
     delay(500);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(74, 11) - toDelay(72, 21) - 1000);
 }
 void slideToTheLeft() { // 1:14:11 to 1:16:00
@@ -532,42 +542,42 @@ void slideToTheRight() { // 1:16:00 to 1:17:50
     delay(toDelay(77, 50) - toDelay(76, 0) - (delayX));
 }
 void crissCross() { // 1:17:50 to 1:19:50
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(500);
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(79, 50) - toDelay(77, 50) - (500*4));
 }
 void crissCross2() { // 1:19:50 to 1:21:50
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(500);
-    setClampPos(clampClosed);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setClampPos(clampOpen);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(81, 50) - toDelay(79, 50) - (500*4));
 }
 void chaChaSlide2() { // 1:21:50 to 1:26:50
     Serial.println("Cha Cha");
     motor1.setSpeed(-150);
     motor2.setSpeed(-150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(700);
     motor1.setSpeed(150);
     motor2.setSpeed(150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(700);
     motor1.setSpeed(0);
     motor2.setSpeed(0);
@@ -599,67 +609,67 @@ void takeItBack4() { // 1:28:50 to 1:30:50
 void twoHopsThisTime() { // 1:30:50 to 1:32:00
     delay(200);
     Serial.println("Hop");
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(92, 0) - toDelay(90, 50) - 1200);
 }
 void twoHopsThisTime2() { // 1:32:00 to 1:33:50
     delay(200);
     Serial.println("Hop");
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(93, 10) - toDelay(92, 0) - 1200);
 }
 void rightFootTwoStomps2() { // 1:33:50 to 1:35:00
     delay(500);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(500);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(95, 0) - toDelay(93, 10) - 1000);
 }
 void leftFootTwoStomps2() { // 1:35:00 to 1:36:20
     delay(200);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(200);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(96, 20) - toDelay(95, 0) - 1000);
 }
 void handsOnYourKnees() { // 1:36:20 to 1:39:50
     Serial.println("Hands on your knees");
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(2000);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(toDelay(99, 50) - toDelay(96, 20) - 200);
 }
 void getFunkyWitIt() { // 1:39:50 to 1:46:50
     Serial.println("Get Funky Wit It");
     motor1.setSpeed(-150);
     motor2.setSpeed(-150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1200);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(1200);
     motor1.setSpeed(150);
     motor2.setSpeed(150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(1200);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(1200);
     motor1.setSpeed(0);
     motor2.setSpeed(0);
@@ -669,19 +679,19 @@ void chaChaRealSmooth2() {
     Serial.println("Cha Cha");
     motor1.setSpeed(150);
     motor2.setSpeed(-150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(700);
     motor1.setSpeed(150);
     motor2.setSpeed(150);
-    setArmPos(objectServoPos);
-    setClampPos(clampClosed);
+    setArmPosDelayless(objectServoPos);
+    setClampPosDelayless(clampClosed);
     delay(700);
-    setArmPos(dumpServoPos);
-    setClampPos(clampOpen);
+    setArmPosDelayless(dumpServoPos);
+    setClampPosDelayless(clampOpen);
     delay(700);
     motor1.setSpeed(0);
     motor2.setSpeed(0);
@@ -734,11 +744,18 @@ void chaChaSlide()
 // END RECEIVER DECLARATIONS
 
 // START TRANSMITTER DECLARATIONS
+
 const int movementJoystick_y = A1;
 const int movementJoystick_x = A0;
 
 const int armJoystick = A2;
 const int clampJoystick = A3;
+/*
+const int movementJoystick_y = A3;
+const int movementJoystick_x = A2;
+
+const int armJoystick = A0;
+const int clampJoystick = A1;*/
 
 const int clampButton = A5;
 const int armButton = A4;
@@ -867,7 +884,7 @@ void loop()
             // END AUTOPILOT
         }
         
-        if (configuration == 1)
+        if (configuration == 1 || configuration == 4)
         {
             data = WifiSerial.getData();
 
@@ -920,8 +937,8 @@ void loop()
             // Motor Movement
             if (configuration == 4)
             {
-                data.armButton = data.spinLeft;
-                data.clampButton = data.spinRight;
+                data.armButton = data.spinRight;
+                data.clampButton = data.spinLeft;
                 data.spinRight = 0;
                 data.spinLeft = 0;
             }
@@ -955,22 +972,22 @@ void loop()
                 {
                     if (xPosition < lowerLimMod)
                     {
-                        turnAdjustment = -constrain(map(xPosition, 0, lowerLimMod, -150, 0), -baseSpeed, 0);
+                        turnAdjustment = constrain(map(xPosition, 0, lowerLimMod, -130, 0), -130, 0); // -
                     }
                     else if (xPosition > upperLimMod)
                     {
-                        turnAdjustment = -constrain(map(xPosition, upperLimMod, 1023, 0, 150), 0, baseSpeed);
+                        turnAdjustment = constrain(map(xPosition, upperLimMod, 1023, 0, 130), 0, 130); // -
                     }
                 }
                 else
                 {
-                    if (xPosition < lowerLimMod)
+                    if (xPosition < lowerLimMod + 5)
                     {
-                        turnAdjustment = map(xPosition, 0, lowerLimMod, -100, 0);
+                        turnAdjustment = map(xPosition, 0, lowerLimMod, -150, -30);
                     }
-                    else if (xPosition > upperLimMod)
+                    else if (xPosition > upperLimMod - 5)
                     {
-                        turnAdjustment = map(xPosition, upperLimMod, 1023, 0, 100);
+                        turnAdjustment = map(xPosition, upperLimMod, 1023, 30, 150);
                     }
                 }
 
