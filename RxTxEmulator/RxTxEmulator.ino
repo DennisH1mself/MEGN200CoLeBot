@@ -48,12 +48,19 @@ const int minTurnSubtracter = 50;
 const int upperJoystickLimit = 529;
 const int lowerJoystickLimit = 505;
 const int joystickCustomMod = 100;
-
+/*
 const int dumpServoPos = 135;
 const int objectServoPos = 65; // 65; // 3:56;
 const int clampClosed = 74;    // 65; // 3:71;
 const int clampOpen = 20;
+const int spinSpeed = 150;*/
+// FOR DNACE
+const int dumpServoPos = 135;
+const int objectServoPos = 71; // 65; // 3:56;
+const int clampClosed = 74;    // 65; // 3:71;
+const int clampOpen = 20;
 const int spinSpeed = 150;
+// END FOR DANCE
 int servo1Limits[2] = {objectServoPos, dumpServoPos + 20};
 int servo2Limits[2] = {clampOpen - 5, clampClosed};
 
@@ -278,7 +285,7 @@ void everybodyClapYourHands() { // 24:42s to 33:25s
 
 void toTheLeft1() { // 33:25s to 34:50s
     float radius = 4.9 / 2.0;
-    float mod = -1;
+    float mod = 1;
     float angularSpeed = speedOf255 / radius;
     float delayX = 1 / angularSpeed * degToRad(90) * 1000;
     Serial.print("Turn (rads): pi/2");
@@ -352,7 +359,7 @@ void chaChaRealSmooth() { // 43:00 to 46:26
 }
 void turnItOut() { // 46:26 to 48:15
     float radius = 4.9 / 2.0;
-    float mod = 1;
+    float mod = -1;
     float angularSpeed = speedOf255 / radius;
     float delayX = 1 / angularSpeed * degToRad(90) * 1000;
     Serial.print("Turn (rads): pi/2");
@@ -366,7 +373,7 @@ void turnItOut() { // 46:26 to 48:15
 }
 void toTheLeft2() { // 48:15 to 49:50
     float radius = 4.9 / 2.0;
-    float mod = -1;
+    float mod = 1;
     float angularSpeed = speedOf255 / radius;
     float delayX = 1 / angularSpeed * degToRad(90) * 1000;
     Serial.print("Turn (rads): pi/2");
@@ -440,7 +447,7 @@ void chaChaNowYall() { // 57:50 to 1:01:00
 }
 void toTheRight() { // 1:01:00 to 1:02:50
     float radius = 4.9 / 2.0;
-    float mod = 1;
+    float mod = -1;
     float angularSpeed = speedOf255 / radius;
     float delayX = 1 / angularSpeed * degToRad(90) * 1000;
     Serial.print("Turn (rads): pi/2");
@@ -454,7 +461,7 @@ void toTheRight() { // 1:01:00 to 1:02:50
 }
 void toTheLeft3() { // 1:02:50 to 1:04:50
     float radius = 4.9 / 2.0;
-    float mod = -1;
+    float mod = 1;
     float angularSpeed = speedOf255 / radius;
     float delayX = 1 / angularSpeed * degToRad(90) * 1000;
     Serial.print("Turn (rads): pi/2");
@@ -515,7 +522,7 @@ void leftFootTwoStomps() { // 1:12:21 to 1:14:11
 }
 void slideToTheLeft() { // 1:14:11 to 1:16:00
     float radius = 4.9 / 2.0;
-    float mod = -1;
+    float mod = 1;
     float angularSpeed = speedOf255 / radius;
     float delayX = 1 / angularSpeed * degToRad(90) * 1000;
     Serial.print("Turn (rads): pi/2");
@@ -529,7 +536,7 @@ void slideToTheLeft() { // 1:14:11 to 1:16:00
 }
 void slideToTheRight() { // 1:16:00 to 1:17:50
     float radius = 4.9 / 2.0;
-    float mod = 1;
+    float mod = -1;
     float angularSpeed = speedOf255 / radius;
     float delayX = 1 / angularSpeed * degToRad(90) * 1000;
     Serial.print("Turn (rads): pi/2");
@@ -585,7 +592,7 @@ void chaChaSlide2() { // 1:21:50 to 1:26:50
 }
 void toTheLeft4() { // 1:26:50 to 1:28:50
     float radius = 4.9 / 2.0;
-    float mod = -1;
+    float mod = 1;
     float angularSpeed = speedOf255 / radius;
     float delayX = 1 / angularSpeed * degToRad(90) * 1000;
     Serial.print("Turn (rads): pi/2");
