@@ -66,7 +66,7 @@ const int spinSpeed = 150;     // Speed for spinning motors
 int servo1Limits[2] = {objectServoPos, dumpServoPos + 20}; // Limits for servo1 movement
 int servo2Limits[2] = {clampOpen - 5, clampClosed}; // Limits for servo2 movement
 
-class DCMotor
+class DCMotor // DC Motor class for controlling DC motors
 {
 public:
     DCMotor(int pwmPin, int pin1, int pin2) // Constructor to initialize motor pins
@@ -103,8 +103,8 @@ private:
     int pin2;   // Pin2 for motor direction
 };
 
-const int servo1Pin = A0; // 9
-const int servo2Pin = A1; // 10
+const int servo1Pin = A0; // 9, arm servo pin
+const int servo2Pin = A1; // 10, clamp servo pin
 
 DCMotor motor2(6, 5, 7); // DCMotor motor2(5, 4, 3); // RIGHT
 DCMotor motor1(3, 2, 4); // DCMotor motor1(6, 7, 8); // LEFT
