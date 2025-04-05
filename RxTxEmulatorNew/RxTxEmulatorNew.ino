@@ -8,8 +8,8 @@ Carlton Engelhardt
 */
 
 // SETTINGS
-const int configuration = 4;             // 1 for original, 2 for autopilot, 3 for dance, 4 for buttons with joystick
-const int motorControlConfiguration = 2; // 1 for original, 2 for modded
+const int configuration = 4;             // Control Configuration: 1 for original, 2 for autopilot, 3 for dance, 4 for buttons with joystick
+const int motorControlConfiguration = 2; // Driving Configuration: 1 for original, 2 for modded
 // END SETTING
 
 // LIBRARIES
